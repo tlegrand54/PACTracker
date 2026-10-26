@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:PACTracker.ViewModels"
+             xmlns:enum="clr-namespace:PACTracker.Enums"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
+             xmlns:skia="clr-namespace:SkiaSharp.Views.Maui.Controls;assembly=SkiaSharp.Views.Maui.Controls"
+             xmlns:draw="clr-namespace:LiveChartsCore.SkiaSharpView.Drawing.Geometries;assembly=LiveChartsCore.SkiaSharpView"
+             x:Class="PACTracker.Views.ComparatifGraphPage"
+             x:DataType="vm:ComparatifGraphViewModel"
+             Title="Comparaison mensuelle">
+
+    <ContentPage.Resources>
+        <Style x:Key="MetricButton" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#EEEEF5, Dark=#2E2E3A}" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light=#555566, Dark=#CCCCDD}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="CornerRadius" Value="20" />
+        </Style>
+
+        <Style x:Key="CardBorder" TargetType="Border">
+            <Setter Property="Padding" Value="16" />
+            <Setter Property="Stroke" Value="{AppThemeBinding Light=#E6E6F0, Dark=#3A3A4A}" />
+            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=White, Dark=#1E1E26}" />
+        </Style>
+
+        <Style x:Key="Caption" TargetType="Label">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="TextColor" Value="Gray" />
+        </Style>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="16">
+
+            <!-- Metric selector -->
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                <Button Grid.Column="0" Text="Consommation&#10;(kWh)"
+                        Style="{StaticResource MetricButton}"
+                        Command="{Binding SelectMetricCommand}"
+                        CommandParameter="{x:Static enum:EnergyMetric.Consumption}">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding SelectedMetric}"
+                                     Value="{x:Static enum:EnergyMetric.Consumption}">
+                            <Setter Property="BackgroundColor" Value="#4C2BD9" />
+                            <Setter Property="TextColor" Value="White" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+                <Button Grid.Column="1" Text="Production&#10;(kWh)"
+                        Style="{StaticResource MetricButton}"
+                        Command="{Binding SelectMetricCommand}"
+                        CommandParameter="{x:Static enum:EnergyMetric.Production}">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding SelectedMetric}"
+                                     Value="{x:Static enum:EnergyMetric.Production}">
+                            <Setter Property="BackgroundColor" Value="#4C2BD9" />
+                            <Setter Property="TextColor" Value="White" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+                <Button Grid.Column="2" Text="COP&#10;(sans unité)"
+                        Style="{StaticResource MetricButton}"
+                        Command="{Binding SelectMetricCommand}"
+                        CommandParameter="{x:Static enum:EnergyMetric.Cop}">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding SelectedMetric}"
+                                     Value="{x:Static enum:EnergyMetric.Cop}">
+                            <Setter Property="BackgroundColor" Value="#4C2BD9" />
+                            <Setter Property="TextColor" Value="White" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+            </Grid>
+
+            <!-- Period picker and year legend -->
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <Picker Grid.Column="0" Title="Période"
+                        HorizontalTextAlignment="Center"
+                        ItemsSource="{Binding PeriodOptions}"
+                        ItemDisplayBinding="{Binding Label, x:DataType=vm:PeriodOption}"
+                        SelectedItem="{Binding SelectedPeriod}" />
+
+                <HorizontalStackLayout Grid.Column="1" Spacing="10" VerticalOptions="Center">
+                    <HorizontalStackLayout Spacing="4">
+                        <BoxView WidthRequest="10" HeightRequest="10" CornerRadius="5"
+                                 Color="{Binding CurrentYearColor}" VerticalOptions="Center" />
+                        <Label Text="{Binding CurrentYear}" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Spacing="4">
+                        <BoxView WidthRequest="10" HeightRequest="10" CornerRadius="5"
+                                 Color="{Binding PreviousYearColor}" VerticalOptions="Center" />
+                        <Label Text="{Binding PreviousYear}" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Spacing="4">
+                        <BoxView WidthRequest="10" HeightRequest="10" CornerRadius="5"
+                                 Color="{Binding PreviousPreviousYearColor}" VerticalOptions="Center" />
+                        <Label Text="{Binding PreviousPreviousYear}" />
+                    </HorizontalStackLayout>
+                </HorizontalStackLayout>
+            </Grid>
+
+            <!-- Chart card -->
+            <Border Style="{StaticResource CardBorder}" StrokeShape="RoundRectangle 16">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="{Binding ChartTitle}" FontSize="18" FontAttributes="Bold" />
+                    <Label Text="{Binding ChartSubtitle}" Style="{StaticResource Caption}" />
+
+                    <lvc:CartesianChart Series="{Binding Series}"
+                            XAxes="{Binding XAxes}"
+                            YAxes="{Binding YAxes}"
+                            LegendPosition="Hidden"
+                            HeightRequest="260" />
+
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Table card -->
+            <Border Style="{StaticResource CardBorder}" StrokeShape="RoundRectangle 16">
+                <VerticalStackLayout>
+
+                    <!-- Header -->
+                    <Grid ColumnDefinitions="1.5*,*,*,*,1.4*" Padding="0,0,0,8">
+                        <Label Grid.Column="0" Text="Mois" FontAttributes="Bold" VerticalOptions="Center" />
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="{Binding CurrentYear}" FontAttributes="Bold" />
+                            <Label Text="{Binding UnitCaption}" Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="2">
+                            <Label Text="{Binding PreviousYear}" FontAttributes="Bold" />
+                            <Label Text="{Binding UnitCaption}" Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="3">
+                            <Label Text="{Binding PreviousPreviousYear}" FontAttributes="Bold" />
+                            <Label Text="{Binding UnitCaption}" Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <!-- Month rows -->
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Rows}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:MonthComparisonRowViewModel">
+                                <Grid ColumnDefinitions="1.5*,*,*,*,1.4*" Padding="0,6">
+                                    <Label Grid.Column="0" Text="{Binding Label}" />
+                                    <Label Grid.Column="1" Text="{Binding CurrentText}" />
+                                    <Label Grid.Column="2" Text="{Binding PreviousText}" />
+                                    <Label Grid.Column="3" Text="{Binding PreviousPreviousText}" />
+                                    <HorizontalStackLayout Grid.Column="4" Spacing="4">
+                                        <Label Text="{Binding VariationArrow}"
+                                               TextColor="{Binding VariationColor}"
+                                               FontAttributes="Bold" VerticalOptions="Center" />
+                                        <VerticalStackLayout>
+                                            <Label Text="{Binding VariationText}"
+                                                   TextColor="{Binding VariationColor}" FontSize="12" />
+                                            <Label Text="{Binding VariationCaption}"
+                                                   Style="{StaticResource Caption}" />
+                                        </VerticalStackLayout>
+                                    </HorizontalStackLayout>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+
+                    <!-- Total row -->
+                    <Grid ColumnDefinitions="1.5*,*,*,*,1.4*" Padding="0,10,0,0">
+                        <Label Grid.Column="0" Text="{Binding TotalRow.Label}" FontAttributes="Bold" />
+                        <Label Grid.Column="1" Text="{Binding TotalRow.CurrentText}" FontAttributes="Bold" />
+                        <Label Grid.Column="2" Text="{Binding TotalRow.PreviousText}" FontAttributes="Bold" />
+                        <Label Grid.Column="3" Text="{Binding TotalRow.PreviousPreviousText}" FontAttributes="Bold" />
+                        <HorizontalStackLayout Grid.Column="4" Spacing="4">
+                            <Label Text="{Binding TotalRow.VariationArrow}"
+                                   TextColor="{Binding TotalRow.VariationColor}"
+                                   FontAttributes="Bold" VerticalOptions="Center" />
+                            <VerticalStackLayout>
+                                <Label Text="{Binding TotalRow.VariationText}"
+                                       TextColor="{Binding TotalRow.VariationColor}" FontSize="12" />
+                                <Label Text="{Binding TotalRow.VariationCaption}"
+                                       Style="{StaticResource Caption}" />
+                            </VerticalStackLayout>
+                        </HorizontalStackLayout>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="{Binding PeriodNote}" Style="{StaticResource Caption}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

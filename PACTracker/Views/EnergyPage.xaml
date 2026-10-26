@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:PACTracker.ViewModels"
+             xmlns:models="clr-namespace:PACTracker.Models"
+             x:Class="PACTracker.Views.EnergyPage"
+             x:DataType="vm:EnergyViewModel"
+             Title="Saisies du mois">
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="16" RowSpacing="32">
+
+        <!-- 1 and 2: back and add buttons -->
+        <Button Grid.Row="0"  Text="Ajouter une saisie" Command="{Binding AddEntryCommand}" />
+
+        <Grid Grid.Row="1" RowDefinitions="Auto, *" RowSpacing="8">
+            <!-- 3a: table header -->
+            <Grid Grid.Row="0" ColumnDefinitions="1.4*,*,*,*">
+                <Label Grid.Column="0" Text="Date" FontAttributes="Bold" />
+                <Label Grid.Column="1" Text="Production" FontAttributes="Bold" />
+                <Label Grid.Column="2" Text="Conso." FontAttributes="Bold" />
+                <Label Grid.Column="3" Text="COP" FontAttributes="Bold" />
+            </Grid>
+
+            <!-- 3b: table rows -->
+            <CollectionView Grid.Row="1" ItemsSource="{Binding Records}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:EnergyModel">
+                        <Grid ColumnDefinitions="1.4*,*,*,*" Padding="0,6">
+                            <Label Grid.Column="0" Text="{Binding Date, StringFormat='{0:dd/MM}'}" />
+                            <Label Grid.Column="1" Text="{Binding Production, StringFormat='{0:F1}'}" />
+                            <Label Grid.Column="2" Text="{Binding Consumption, StringFormat='{0:F1}'}" />
+                            <Label Grid.Column="3" Text="{Binding Cop, StringFormat='{0:F2}', TargetNullValue='-'}" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>        
+
+        <!-- 4: monthly totals -->
+        <Border Grid.Row="2" Padding="12" StrokeShape="RoundRectangle 8">
+            <Grid ColumnDefinitions="*,*,*">
+                <VerticalStackLayout Grid.Column="0">
+                    <Label Text="Production" FontSize="12" />
+                    <Label Text="{Binding TotalProduction, StringFormat='{0:F1} kWh'}" FontAttributes="Bold" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Grid.Column="1">
+                    <Label Text="Consommation" FontSize="12" />
+                    <Label Text="{Binding TotalConsumption, StringFormat='{0:F1} kWh'}" FontAttributes="Bold" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Grid.Column="2">
+                    <Label Text="COP du mois" FontSize="12" />
+                    <Label Text="{Binding MonthCop, StringFormat='{0:F2}', TargetNullValue='-'}" FontAttributes="Bold" />
+                </VerticalStackLayout>
+            </Grid>
+        </Border>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:PACTracker.ViewModels"
+             x:Class="PACTracker.MainPage"
+             x:DataType="vm:MainPageViewModel"
+             Title="PAC Tracker">
+
+    <VerticalStackLayout Padding="24" Spacing="128" VerticalOptions="Center">
+        <Button 
+            MinimumWidthRequest="50"
+            MinimumHeightRequest="50"
+            WidthRequest="160"
+            HeightRequest="160"
+            BackgroundColor="ForestGreen"
+            FontAutoScalingEnabled="True"
+            FontAttributes="Bold"
+            Text="Saisies du mois" Command="{Binding GoToEnergyCommand}" />
+        
+        <Button 
+            MinimumWidthRequest="50"
+            MinimumHeightRequest="50"
+            WidthRequest="160"
+            HeightRequest="160"
+            FontAutoScalingEnabled="True"
+            FontAttributes="Bold"
+            Text="Comparatif" Command="{Binding GoToComparisonCommand}" />
+    </VerticalStackLayout>
+</ContentPage>

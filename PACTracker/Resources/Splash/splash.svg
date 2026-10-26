@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+	<defs>
+		<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+			<stop offset="0" stop-color="#315BFF"/>
+			<stop offset="1" stop-color="#10149B"/>
+		</linearGradient>
+		<linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
+			<stop offset="0" stop-color="#8AF044"/>
+			<stop offset="1" stop-color="#27CC52"/>
+		</linearGradient>
+	</defs>
+
+	<!-- Background -->
+	<rect x="0" y="0" width="1024" height="1024" rx="190" fill="url(#bg)"/>
+
+	<!-- House outline -->
+	<path d="M205 390 L512 170 L819 390"
+		  fill="none" stroke="#FFFFFF" stroke-width="42"
+		  stroke-linecap="round" stroke-linejoin="round"/>
+	<path d="M270 370 V650 Q270 690 310 690 H580"
+		  fill="none" stroke="#FFFFFF" stroke-width="36"
+		  stroke-linecap="round" stroke-linejoin="round"/>
+	<path d="M754 370 V505"
+		  fill="none" stroke="#FFFFFF" stroke-width="36"
+		  stroke-linecap="round"/>
+
+	<!-- Energy bars -->
+	<rect x="380" y="340" width="72" height="110" rx="15" fill="url(#green)"/>
+	<rect x="470" y="300" width="72" height="150" rx="15" fill="#FFD928"/>
+	<rect x="560" y="250" width="72" height="200" rx="15" fill="#FF7828"/>
+
+	<!-- Heat pump unit -->
+	<rect x="315" y="465" width="340" height="220" rx="34" fill="#FFFFFF"/>
+	<circle cx="415" cy="575" r="70" fill="#1522B5"/>
+	<circle cx="415" cy="575" r="10" fill="#FFFFFF"/>
+	<path d="M415 565 C383 540 385 512 411 512 C432 512 433 541 421 567 Z" fill="#FFFFFF"/>
+	<path d="M425 575 C450 543 478 546 478 571 C478 592 449 593 425 582 Z" fill="#FFFFFF"/>
+	<path d="M415 585 C447 610 445 638 420 638 C399 638 398 609 409 583 Z" fill="#FFFFFF"/>
+	<path d="M405 575 C380 607 352 604 352 579 C352 558 381 557 407 568 Z" fill="#FFFFFF"/>
+
+	<!-- Ventilation lines -->
+	<g stroke="#1522B5" stroke-width="15" stroke-linecap="round">
+		<path d="M520 520 H590"/>
+		<path d="M520 558 H590"/>
+		<path d="M520 596 H590"/>
+		<path d="M520 634 H590"/>
+	</g>
+
+	<!-- Green leaf -->
+	<path d="M620 705 C625 620 690 555 795 545 C792 642 730 707 620 705 Z"
+		  fill="url(#green)"/>
+	<path d="M630 695 C672 647 712 612 764 572"
+		  fill="none" stroke="#1522B5" stroke-width="12" stroke-linecap="round"/>
+</svg>
