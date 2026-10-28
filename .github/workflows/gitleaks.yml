@@ -1,0 +1,25 @@
+
+name: Gitleaks
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    name: Scan for secrets
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

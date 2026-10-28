@@ -1,0 +1,25 @@
+name: PACTracker CI
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gitleaks:
+    name: Gitleaks
+    uses: ./.github/workflows/gitleaks.yml
+    permissions:
+      contents: read
+
+  build:
+    name: Build Android
+    if: github.event_name == 'pull_request'
+    needs: gitleaks
+    uses: ./.github/workflows/build-test.yml
+    permissions:
+      contents: read
