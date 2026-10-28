@@ -6,8 +6,8 @@
     xmlns:views="clr-namespace:PACTracker.Views"
     Shell.FlyoutBehavior="Disabled"
     Shell.TabBarBackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
-    Shell.TabBarForegroundColor="#0D47A1"
-    Shell.TabBarTitleColor="#0D47A1"
+    Shell.TabBarForegroundColor="#1565C0"
+    Shell.TabBarTitleColor="#1565C0"
     Shell.TabBarUnselectedColor="#808080">
 
     <TabBar>
