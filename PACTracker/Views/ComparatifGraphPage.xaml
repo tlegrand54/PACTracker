@@ -26,7 +26,7 @@
 
         <Style x:Key="Caption" TargetType="Label">
             <Setter Property="FontSize" Value="11" />
-            <Setter Property="TextColor" Value="Gray" />
+            <Setter Property="TextColor" Value="{StaticResource Gray100}" />
         </Style>
     </ContentPage.Resources>
 
@@ -42,8 +42,8 @@
                     <Button.Triggers>
                         <DataTrigger TargetType="Button" Binding="{Binding SelectedMetric}"
                                      Value="{x:Static enum:EnergyMetric.Consumption}">
-                            <Setter Property="BackgroundColor" Value="#4C2BD9" />
-                            <Setter Property="TextColor" Value="White" />
+                            <Setter Property="BackgroundColor" Value="{StaticResource PrimaryDark}" />
+                            <Setter Property="TextColor" Value="{StaticResource White}" />
                         </DataTrigger>
                     </Button.Triggers>
                 </Button>
@@ -54,8 +54,8 @@
                     <Button.Triggers>
                         <DataTrigger TargetType="Button" Binding="{Binding SelectedMetric}"
                                      Value="{x:Static enum:EnergyMetric.Production}">
-                            <Setter Property="BackgroundColor" Value="#4C2BD9" />
-                            <Setter Property="TextColor" Value="White" />
+                            <Setter Property="BackgroundColor" Value="{StaticResource PrimaryDark}" />
+                            <Setter Property="TextColor" Value="{StaticResource White}" />
                         </DataTrigger>
                     </Button.Triggers>
                 </Button>
@@ -66,8 +66,8 @@
                     <Button.Triggers>
                         <DataTrigger TargetType="Button" Binding="{Binding SelectedMetric}"
                                      Value="{x:Static enum:EnergyMetric.Cop}">
-                            <Setter Property="BackgroundColor" Value="#4C2BD9" />
-                            <Setter Property="TextColor" Value="White" />
+                            <Setter Property="BackgroundColor" Value="{StaticResource PrimaryDark}" />
+                            <Setter Property="TextColor" Value="{StaticResource White}" />
                         </DataTrigger>
                     </Button.Triggers>
                 </Button>

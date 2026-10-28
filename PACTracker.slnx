@@ -1,6 +1,9 @@
 <Solution>
   <Project Path="PACTracker.Core/PACTracker.Core.csproj" Id="9f10bf0b-3f19-4a21-9962-78a479d9bd7e" />
   <Project Path="PACTracker.Domain/PACTracker.Domain.csproj" Id="133c9dbc-eec1-4662-80ce-30f57db65cbd" />
-  <Project Path="PACTracker.infrastructure/PACTracker.Infrastructure.csproj" Id="fc7aaeda-ed84-4104-9c06-329ea930ab77" />
-  <Project Path="PACTracker/PACTracker.csproj" />
+  <Project Path="PACTracker.Infrastructure/PACTracker.Infrastructure.csproj" Id="fc7aaeda-ed84-4104-9c06-329ea930ab77" />
+  <Project Path="PACTracker.Tests/PACTracker.Tests.csproj" Id="51ccade5-eb52-4b70-9d7c-6901fca71421" />
+  <Project Path="PACTracker/PACTracker.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
 </Solution>
