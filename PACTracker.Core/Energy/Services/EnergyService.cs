@@ -1,4 +1,5 @@
 ﻿using PACTracker.Core.Energy.DTOs;
+using PACTracker.Core.Exceptions;
 using PACTracker.Domain.Entities;
 using PACTracker.Infrastructure.Repositories;
 using System;
@@ -53,10 +54,20 @@ namespace PACTracker.Core.Energy.Services
         {
             var record = new EnergyEntity { Date = date, Consumption = consumption, Production = production };
             if (record.Consumption < 0 || record.Production < 0)
-                throw new ArgumentOutOfRangeException(nameof(record), "Values must be positive.");
+            {
+                ArgumentOutOfRangeException argumentOutOfRangeException = new(nameof(record), "Values must be positive.");
+                throw argumentOutOfRangeException;
+            }
 
-            // One record per day: drop the time part so the unique index on Date works
+            // drop the time part so the unique index on Date works
             record.Date = record.Date.Date;
+
+            var monthRecord = GetAllRecordsByMonthAsync(record.Date.Year, record.Date.Month);
+
+            var laterRecord = monthRecord.Result.OrderByDescending(r => r.Date).FirstOrDefault();
+
+            if (laterRecord != null && (laterRecord.Consumption > record.Consumption || laterRecord.Production > record.Production))
+                throw new InvalidReadingException("The reading must be higher than the last one of the same month.");
 
             return repository.UpsertAsync(record, ct);
         }
