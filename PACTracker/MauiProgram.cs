@@ -43,6 +43,9 @@ namespace PACTracker
             builder.Services.AddTransient<AnnualPageViewModel>();
             builder.Services.AddTransient<AnnualPage>();
 
+            builder.Services.AddTransient<SettingsViewModel>();
+            builder.Services.AddTransient<SettingsPage>();
+
             // Add Service from PACTracker.Core.Injection
             builder.Services.AddPACTrackerCoreService();
 

@@ -2,11 +2,20 @@
 using PACTracker.Core.Exceptions;
 using PACTracker.Domain.Entities;
 using PACTracker.Infrastructure.Repositories;
+using System.Text.Json;
 
 namespace PACTracker.Core.Energy.Services
 {
     public class EnergyService : IEnergyService
     {
+        private const int DataFormatVersion = 1;
+        private static readonly JsonSerializerOptions JsonOptions = new()
+        {
+            PropertyNameCaseInsensitive = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = true
+        };
+
         private readonly IEnergyRepository repository;
 
         public EnergyService(IEnergyRepository energyRepository) => repository = energyRepository;
@@ -96,6 +105,89 @@ namespace PACTracker.Core.Energy.Services
             }
 
             await repository.UpsertAsync(record, ct);
+        }
+
+        public async Task<string> ExportDataAsync(CancellationToken ct = default)
+        {
+            var records = await repository.GetAllAsync(ct);
+            var dataFile = new EnergyDataFileDto
+            {
+                Version = DataFormatVersion,
+                Records = records
+                    .OrderBy(record => record.Date)
+                    .Select(record => new EnergyDataRecordDto(
+                        record.Date.Date,
+                        record.Consumption,
+                        record.Production))
+                    .ToList()
+            };
+
+            return JsonSerializer.Serialize(dataFile, JsonOptions);
+        }
+
+        public async Task<int> ImportDataAsync(string json, CancellationToken ct = default)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                throw new InvalidDataException("The selected file is empty.");
+            }
+
+            EnergyDataFileDto? dataFile;
+            try
+            {
+                dataFile = JsonSerializer.Deserialize<EnergyDataFileDto>(json, JsonOptions);
+            }
+            catch (JsonException exception)
+            {
+                throw new InvalidDataException("The selected file is not a valid PACTracker export.", exception);
+            }
+
+            if (dataFile is null || dataFile.Version != DataFormatVersion || dataFile.Records is null)
+            {
+                throw new InvalidDataException("The selected file has an unsupported or invalid format.");
+            }
+
+            var records = new List<EnergyEntity>(dataFile.Records.Count);
+            var dates = new HashSet<DateTime>();
+            foreach (var importedRecord in dataFile.Records)
+            {
+                if (importedRecord is null)
+                {
+                    throw new InvalidDataException("The selected file contains an invalid measurement.");
+                }
+
+                var date = importedRecord.Date.Date;
+                if (importedRecord.Date == default || date > DateTime.Today)
+                {
+                    throw new InvalidDataException("The selected file contains an invalid measurement date.");
+                }
+
+                if (!dates.Add(date))
+                {
+                    throw new InvalidDataException("The selected file contains more than one measurement for a date.");
+                }
+
+                ValidateImportedValue(nameof(importedRecord.Consumption), importedRecord.Consumption);
+                ValidateImportedValue(nameof(importedRecord.Production), importedRecord.Production);
+
+                records.Add(new EnergyEntity
+                {
+                    Date = date,
+                    Consumption = importedRecord.Consumption,
+                    Production = importedRecord.Production
+                });
+            }
+
+            await repository.UpsertManyAsync(records, ct);
+            return records.Count;
+        }
+
+        private static void ValidateImportedValue(string parameterName, double value)
+        {
+            if (!double.IsFinite(value) || value < 0)
+            {
+                throw new InvalidDataException($"The selected file contains an invalid {parameterName} value.");
+            }
         }
 
         private static void ValidateReadingValue(string parameterName, double value)

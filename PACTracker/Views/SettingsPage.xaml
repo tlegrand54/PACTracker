@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:PACTracker.ViewModels"
+             xmlns:resources="clr-namespace:PACTracker.Resources.Translation"
+             x:Class="PACTracker.Views.SettingsPage"
+             x:DataType="vm:SettingsViewModel"
+             Title="{x:Static resources:AppResources.SettingsPageTitle}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="16">
+            <Label Text="{x:Static resources:AppResources.DataTransferHeading}"
+                   FontSize="22"
+                   FontAttributes="Bold" />
+
+            <Label Text="{x:Static resources:AppResources.DataTransferDescription}"
+                   LineBreakMode="WordWrap" />
+
+            <Button Text="{x:Static resources:AppResources.ExportButton}"
+                    Command="{Binding ExportCommand}" />
+
+            <Button Text="{x:Static resources:AppResources.ImportButton}"
+                    Command="{Binding ImportCommand}" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}" />
+
+            <Label Text="{Binding StatusMessage}"
+                   LineBreakMode="WordWrap" />
+
+            <Label Text="{x:Static resources:AppResources.ImportPolicyDescription}"
+                   FontSize="12"
+                   LineBreakMode="WordWrap" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

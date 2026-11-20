@@ -3,22 +3,23 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:PACTracker.ViewModels"
              xmlns:models="clr-namespace:PACTracker.Models"
+             xmlns:resources="clr-namespace:PACTracker.Resources.Translation"
              x:Class="PACTracker.Views.EnergyPage"
              x:DataType="vm:EnergyViewModel"
-             Title="Saisies du mois">
+             Title="{x:Static resources:AppResources.EnergyPageTitle}">
 
     <Grid RowDefinitions="Auto,*,Auto" Padding="16" RowSpacing="32">
 
         <!-- 1 and 2: back and add buttons -->
-        <Button Grid.Row="0"  Text="Ajouter une saisie" Command="{Binding AddEntryCommand}" />
+        <Button Grid.Row="0"  Text="{x:Static resources:AppResources.AddEnergyButton}" Command="{Binding AddEntryCommand}" />
 
         <Grid Grid.Row="1" RowDefinitions="Auto, *" RowSpacing="8">
             <!-- 3a: table header -->
             <Grid Grid.Row="0" ColumnDefinitions="1.4*,*,*,*">
-                <Label Grid.Column="0" Text="Date" FontAttributes="Bold" />
-                <Label Grid.Column="1" Text="Production" FontAttributes="Bold" />
-                <Label Grid.Column="2" Text="Conso." FontAttributes="Bold" />
-                <Label Grid.Column="3" Text="COP" FontAttributes="Bold" />
+                <Label Grid.Column="0" Text="{x:Static resources:AppResources.DateLabel}" FontAttributes="Bold" />
+                <Label Grid.Column="1" Text="{x:Static resources:AppResources.ProductionLabel}" FontAttributes="Bold" />
+                <Label Grid.Column="2" Text="{x:Static resources:AppResources.ConsumptionShortLabel}" FontAttributes="Bold" />
+                <Label Grid.Column="3" Text="{x:Static resources:AppResources.CopLabel}" FontAttributes="Bold" />
             </Grid>
 
             <!-- 3b: table rows -->
@@ -40,15 +41,15 @@
         <Border Grid.Row="2" Padding="12" StrokeShape="RoundRectangle 8">
             <Grid ColumnDefinitions="*,*,*">
                 <VerticalStackLayout Grid.Column="0">
-                    <Label Text="Production" FontSize="12" />
+                    <Label Text="{x:Static resources:AppResources.ProductionLabel}" FontSize="12" />
                     <Label Text="{Binding TotalProduction, StringFormat='{0:F1} kWh'}" FontAttributes="Bold" />
                 </VerticalStackLayout>
                 <VerticalStackLayout Grid.Column="1">
-                    <Label Text="Consommation" FontSize="12" />
+                    <Label Text="{x:Static resources:AppResources.ConsumptionLabel}" FontSize="12" />
                     <Label Text="{Binding TotalConsumption, StringFormat='{0:F1} kWh'}" FontAttributes="Bold" />
                 </VerticalStackLayout>
                 <VerticalStackLayout Grid.Column="2">
-                    <Label Text="COP du mois" FontSize="12" />
+                    <Label Text="{x:Static resources:AppResources.MonthlyCopLabel}" FontSize="12" />
                     <Label Text="{Binding MonthCop, StringFormat='{0:F2}', TargetNullValue='-'}" FontAttributes="Bold" />
                 </VerticalStackLayout>
             </Grid>

@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:views="clr-namespace:PACTracker.Views"
+    xmlns:resources="clr-namespace:PACTracker.Resources.Translation"
     Shell.FlyoutBehavior="Disabled"
     Shell.TabBarBackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
     Shell.TabBarForegroundColor="#1565C0"
@@ -11,12 +12,14 @@
     Shell.TabBarUnselectedColor="#808080">
 
     <TabBar>
-        <ShellContent Title="Accueil" Icon="home_icon.png" Route="EnergyPage"
+        <ShellContent Title="{x:Static resources:AppResources.HomeTabTitle}" Icon="home_icon.png" Route="EnergyPage"
                       ContentTemplate="{DataTemplate views:EnergyPage}" />
-        <ShellContent Title="Annuel" Icon="annual_icon.png" Route="AnnualPage"
+        <ShellContent Title="{x:Static resources:AppResources.AnnualTabTitle}" Icon="annual_icon.png" Route="AnnualPage"
                       ContentTemplate="{DataTemplate views:AnnualPage}" />
-        <ShellContent Title="Mensuel" Icon="monthly_icon.png" Route="ComparatifGraphPage"
+        <ShellContent Title="{x:Static resources:AppResources.MonthlyTabTitle}" Icon="monthly_icon.png" Route="ComparatifGraphPage"
                       ContentTemplate="{DataTemplate views:ComparatifGraphPage}" />
+        <ShellContent Title="{x:Static resources:AppResources.SettingsTabTitle}" Icon="settings_icon.png" Route="SettingsPage"
+                      ContentTemplate="{DataTemplate views:SettingsPage}" />
     </TabBar>
 
 </Shell>

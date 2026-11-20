@@ -29,7 +29,11 @@ namespace PACTracker.Infrastructure.Repositories
         /// <returns>Task representing the asynchronous operation, containing the read-only list of energy entities.</returns>
         Task<IReadOnlyList<EnergyEntity>> GetByYearAsync(int year, CancellationToken ct = default);
 
+        Task<IReadOnlyList<EnergyEntity>> GetAllAsync(CancellationToken ct = default);
+
         // Inserts the record, or updates the existing one for the same day
         Task UpsertAsync(EnergyEntity energy, CancellationToken ct = default);
+
+        Task UpsertManyAsync(IReadOnlyCollection<EnergyEntity> energies, CancellationToken ct = default);
     }
 }
