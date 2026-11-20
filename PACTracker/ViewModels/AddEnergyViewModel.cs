@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PACTracker.Core.Energy.Services;
+using PACTracker.Core.Exceptions;
 using PACTracker.Models;
 
 namespace PACTracker.ViewModels
@@ -36,10 +37,20 @@ namespace PACTracker.ViewModels
 
             ErrorMessage = string.Empty;
 
-            // An existing entry for the same day is replaced by the service
-            await energyService.SaveRecordAsync( SelectedDate.Date, consumption, production);
-
-            await Shell.Current.GoToAsync("..");
+            try
+            {
+                // An existing entry for the same day is replaced by the service
+                await energyService.SaveRecordAsync(SelectedDate.Date, consumption, production);
+                await Shell.Current.GoToAsync("..");
+            }
+            catch (InvalidReadingException exception)
+            {
+                ErrorMessage = exception.Message;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                ErrorMessage = "Veuillez saisir des nombres positifs valides.";
+            }
         }
 
         [RelayCommand]
@@ -49,12 +60,17 @@ namespace PACTracker.ViewModels
         {
             value = 0;
 
-            if (string.IsNullOrEmpty(text))
+            if (string.IsNullOrWhiteSpace(text))
             {
                 return false;
             }
 
-            return double.TryParse(text.Replace(',','.'), System.Globalization.CultureInfo.InvariantCulture, out value);
+            return double.TryParse(
+                       text.Replace(',', '.'),
+                       System.Globalization.CultureInfo.InvariantCulture,
+                       out value)
+                   && double.IsFinite(value)
+                   && value >= 0;
         }
     }
 }

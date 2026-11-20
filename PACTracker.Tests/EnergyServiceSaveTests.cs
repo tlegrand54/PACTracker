@@ -67,4 +67,34 @@ public class EnergyServiceSaveTests
 
         await repository.Received(1).UpsertAsync(Arg.Any<Energy>());
     }
+
+    [TestMethod]
+    [DataRow(double.NaN, 300)]
+    [DataRow(100, double.PositiveInfinity)]
+    [DataRow(double.NegativeInfinity, 300)]
+    public async Task NonFiniteValue_IsRejected(double consumption, double production)
+    {
+        var (service, repository) = Create();
+
+        await Assert.ThrowsExactlyAsync<ArgumentOutOfRangeException>(() =>
+            service.SaveRecordAsync(new DateTime(2026, 3, 20), consumption, production));
+
+        await repository.DidNotReceive().UpsertAsync(Arg.Any<Energy>());
+    }
+
+    [TestMethod]
+    public async Task ReplacementOfExistingDate_IsComparedWithOtherRecords()
+    {
+        var (service, repository) = Create(
+            Reading(new DateTime(2026, 3, 10), consumption: 100, production: 300),
+            Reading(new DateTime(2026, 3, 20), consumption: 150, production: 350),
+            Reading(new DateTime(2026, 3, 30), consumption: 200, production: 400));
+
+        await service.SaveRecordAsync(new DateTime(2026, 3, 20), consumption: 175, production: 375);
+
+        await repository.Received(1).UpsertAsync(Arg.Is<Energy>(r =>
+            r.Date == new DateTime(2026, 3, 20) &&
+            r.Consumption == 175 &&
+            r.Production == 375));
+    }
 }
