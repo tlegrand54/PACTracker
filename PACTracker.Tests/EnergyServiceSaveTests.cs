@@ -59,6 +59,16 @@ public class EnergyServiceSaveTests
     }
 
     [TestMethod]
+    public async Task ZeroValues_AreAccepted()
+    {
+        var (service, repository) = Create();
+
+        await service.SaveRecordAsync(new DateTime(2026, 3, 20), consumption: 0, production: 0);
+
+        await repository.Received(1).UpsertAsync(Arg.Any<Energy>());
+    }
+
+    [TestMethod]
     public async Task LowerValueInANewMonth_IsAccepted_BecauseTheCounterRestarts()
     {
         var (service, repository) = Create(Reading(new DateTime(2026, 3, 31), consumption: 500, production: 1500));
@@ -69,14 +79,78 @@ public class EnergyServiceSaveTests
     }
 
     [TestMethod]
-    [DataRow(double.NaN, 300)]
-    [DataRow(100, double.PositiveInfinity)]
-    [DataRow(double.NegativeInfinity, 300)]
-    public async Task NonFiniteValue_IsRejected(double consumption, double production)
+    [DataRow(double.NaN, 300, "consumption")]
+    [DataRow(double.PositiveInfinity, 300, "consumption")]
+    [DataRow(double.NegativeInfinity, 300, "consumption")]
+    [DataRow(100, double.NaN, "production")]
+    [DataRow(100, double.PositiveInfinity, "production")]
+    [DataRow(100, double.NegativeInfinity, "production")]
+    public async Task NonFiniteValue_IsRejected(
+        double consumption,
+        double production,
+        string parameterName)
     {
         var (service, repository) = Create();
 
-        await Assert.ThrowsExactlyAsync<ArgumentOutOfRangeException>(() =>
+        var exception = await Assert.ThrowsExactlyAsync<ArgumentOutOfRangeException>(() =>
+            service.SaveRecordAsync(new DateTime(2026, 3, 20), consumption, production));
+
+        Assert.AreEqual(parameterName, exception.ParamName);
+        await repository.DidNotReceive().UpsertAsync(Arg.Any<Energy>());
+    }
+
+    [TestMethod]
+    [DataRow(-1, 300, "consumption")]
+    [DataRow(100, -1, "production")]
+    public async Task NegativeValue_IsRejected(double consumption, double production, string parameterName)
+    {
+        var (service, repository) = Create();
+
+        var exception = await Assert.ThrowsExactlyAsync<ArgumentOutOfRangeException>(() =>
+            service.SaveRecordAsync(new DateTime(2026, 3, 20), consumption, production));
+
+        Assert.AreEqual(parameterName, exception.ParamName);
+        await repository.DidNotReceive().UpsertAsync(Arg.Any<Energy>());
+    }
+
+    [TestMethod]
+    public async Task FutureDate_IsRejectedBeforeReadingOrSaving()
+    {
+        var (service, repository) = Create();
+
+        var exception = await Assert.ThrowsExactlyAsync<ArgumentOutOfRangeException>(() =>
+            service.SaveRecordAsync(DateTime.Today.AddDays(1), 100, 300));
+
+        Assert.AreEqual("date", exception.ParamName);
+        await repository.DidNotReceive().GetByMonthAsync(Arg.Any<int>(), Arg.Any<int>());
+        await repository.DidNotReceive().UpsertAsync(Arg.Any<Energy>());
+    }
+
+    [TestMethod]
+    [DataRow(90, 300)]
+    [DataRow(100, 290)]
+    public async Task ValueLowerThanPreviousReading_IsRejectedIfEitherMetricDecreases(
+        double consumption,
+        double production)
+    {
+        var (service, repository) = Create(Reading(new DateTime(2026, 3, 10), 100, 300));
+
+        await Assert.ThrowsExactlyAsync<InvalidReadingException>(() =>
+            service.SaveRecordAsync(new DateTime(2026, 3, 20), consumption, production));
+
+        await repository.DidNotReceive().UpsertAsync(Arg.Any<Energy>());
+    }
+
+    [TestMethod]
+    [DataRow(110, 300)]
+    [DataRow(100, 310)]
+    public async Task ValueHigherThanNextReading_IsRejectedIfEitherMetricIncreases(
+        double consumption,
+        double production)
+    {
+        var (service, repository) = Create(Reading(new DateTime(2026, 3, 30), 100, 300));
+
+        await Assert.ThrowsExactlyAsync<InvalidReadingException>(() =>
             service.SaveRecordAsync(new DateTime(2026, 3, 20), consumption, production));
 
         await repository.DidNotReceive().UpsertAsync(Arg.Any<Energy>());
@@ -96,5 +170,36 @@ public class EnergyServiceSaveTests
             r.Date == new DateTime(2026, 3, 20) &&
             r.Consumption == 175 &&
             r.Production == 375));
+    }
+
+    [TestMethod]
+    public async Task RepositoryFailure_IsPropagatedAndDoesNotTriggerUpsert()
+    {
+        var repository = Substitute.For<IEnergyRepository>();
+        var expectedException = new IOException("Database is unavailable.");
+        repository.GetByMonthAsync(Arg.Any<int>(), Arg.Any<int>())
+            .Returns<Task<IReadOnlyList<Energy>>>(_ => Task.FromException<IReadOnlyList<Energy>>(expectedException));
+        var service = new EnergyService(repository);
+
+        var actualException = await Assert.ThrowsExactlyAsync<IOException>(() =>
+            service.SaveRecordAsync(new DateTime(2026, 3, 20), 100, 300));
+
+        Assert.AreSame(expectedException, actualException);
+        await repository.DidNotReceive().UpsertAsync(Arg.Any<Energy>());
+    }
+
+    [TestMethod]
+    public async Task UpsertFailure_IsPropagated()
+    {
+        var repository = Substitute.For<IEnergyRepository>();
+        var expectedException = new IOException("Database is read-only.");
+        repository.UpsertAsync(Arg.Any<Energy>(), Arg.Any<CancellationToken>())
+            .Returns<Task>(_ => Task.FromException(expectedException));
+        var service = new EnergyService(repository);
+
+        var actualException = await Assert.ThrowsExactlyAsync<IOException>(() =>
+            service.SaveRecordAsync(new DateTime(2026, 3, 20), 100, 300));
+
+        Assert.AreSame(expectedException, actualException);
     }
 }

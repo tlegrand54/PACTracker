@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\PACTracker.Core\PACTracker.Core.csproj" />
     <ProjectReference Include="..\PACTracker.Domain\PACTracker.Domain.csproj" />
+    <ProjectReference Include="..\PACTracker.infrastructure\PACTracker.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
