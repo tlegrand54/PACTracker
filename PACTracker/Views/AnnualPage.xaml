@@ -2,9 +2,10 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:PACTracker.ViewModels"
+             xmlns:resources="clr-namespace:PACTracker.Resources.Translation"
              x:Class="PACTracker.Views.AnnualPage"
              x:DataType="vm:AnnualPageViewModel"
-             Title="Comparaison annuelle">
+             Title="{x:Static resources:AppResources.AnnualPageTitle}">
 
     <CollectionView ItemsSource="{Binding Cards}" Margin="16">
         <CollectionView.ItemsLayout>
@@ -19,15 +20,15 @@
 
                         <Grid ColumnDefinitions="*,*,*">
                             <VerticalStackLayout Grid.Column="0">
-                                <Label Text="Production" FontSize="12" />
+                                <Label Text="{x:Static resources:AppResources.ProductionLabel}" FontSize="12" />
                                 <Label Text="{Binding Production, StringFormat='{0:F0} kWh'}" FontAttributes="Bold" />
                             </VerticalStackLayout>
                             <VerticalStackLayout Grid.Column="1">
-                                <Label Text="Consommation" FontSize="12" />
+                                <Label Text="{x:Static resources:AppResources.ConsumptionLabel}" FontSize="12" />
                                 <Label Text="{Binding Consumption, StringFormat='{0:F0} kWh'}" FontAttributes="Bold" />
                             </VerticalStackLayout>
                             <VerticalStackLayout Grid.Column="2">
-                                <Label Text="COP" FontSize="12" />
+                                <Label Text="{x:Static resources:AppResources.CopLabel}" FontSize="12" />
                                 <Label Text="{Binding Cop, StringFormat='{0:F2}', TargetNullValue='-'}" FontAttributes="Bold" />
                             </VerticalStackLayout>
                         </Grid>

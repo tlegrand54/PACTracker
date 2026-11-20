@@ -2,29 +2,30 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:PACTracker.ViewModels"
+             xmlns:resources="clr-namespace:PACTracker.Resources.Translation"
              x:Class="PACTracker.Views.AddEnergyPage"
              x:DataType="vm:AddEnergyViewModel"
-             Title="Nouvelle saisie">
+             Title="{x:Static resources:AppResources.AddEnergyPageTitle}">
 
     <ScrollView>
         <VerticalStackLayout Padding="16" Spacing="16">
 
             <VerticalStackLayout Spacing="4">
-                <Label Text="Date" FontAttributes="Bold" />
+                <Label Text="{x:Static resources:AppResources.DateLabel}" FontAttributes="Bold" />
                 <DatePicker Date="{Binding SelectedDate}"
                             MaximumDate="{Binding MaximumDate}" />
             </VerticalStackLayout>
 
             <VerticalStackLayout Spacing="4">
-                <Label Text="Consommation électrique (kWh)" FontAttributes="Bold" />
-                <Entry Placeholder="ex : 12,5"
+                <Label Text="{x:Static resources:AppResources.ElectricityConsumptionLabel}" FontAttributes="Bold" />
+                <Entry Placeholder="{x:Static resources:AppResources.ConsumptionPlaceholder}"
                        Keyboard="Numeric"
                        Text="{Binding ConsumptionText}" />
             </VerticalStackLayout>
 
             <VerticalStackLayout Spacing="4">
-                <Label Text="Production de chaleur (kWh)" FontAttributes="Bold" />
-                <Entry Placeholder="ex : 38,0"
+                <Label Text="{x:Static resources:AppResources.HeatProductionLabel}" FontAttributes="Bold" />
+                <Entry Placeholder="{x:Static resources:AppResources.ProductionPlaceholder}"
                        Keyboard="Numeric"
                        Text="{Binding ProductionText}" />
             </VerticalStackLayout>
@@ -35,10 +36,10 @@
 
             <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
                 <Button Grid.Column="0"
-                        Text="Annuler"
+                        Text="{x:Static resources:AppResources.CancelButton}"
                         Command="{Binding CancelCommand}" />
                 <Button Grid.Column="1"
-                        Text="Enregistrer"
+                        Text="{x:Static resources:AppResources.SaveButton}"
                         Command="{Binding SaveCommand}" />
             </Grid>
 

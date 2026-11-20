@@ -1,6 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PACTracker.Core.Energy.Services;
+using PACTracker.Resources.Translation;
+using System.Globalization;
 using System.Text;
 
 namespace PACTracker.ViewModels;
@@ -33,23 +35,23 @@ public partial class SettingsViewModel(IEnergyService energyService) : Observabl
 
             await Share.Default.RequestAsync(new ShareFileRequest
             {
-                Title = "Exporter les données PACTracker",
+                Title = AppResources.ExportShareTitle,
                 File = new ShareFile(filePath, "application/json")
             });
 
-            StatusMessage = "Export prêt. Choisissez où enregistrer ou partager le fichier.";
+            StatusMessage = AppResources.ExportReadyStatus;
         }
         catch (IOException)
         {
-            StatusMessage = "Impossible de créer ou partager le fichier d’export.";
+            StatusMessage = AppResources.ExportFailedStatus;
         }
         catch (UnauthorizedAccessException)
         {
-            StatusMessage = "L’accès au fichier d’export a été refusé.";
+            StatusMessage = AppResources.ExportAccessDeniedStatus;
         }
         catch (FeatureNotSupportedException)
         {
-            StatusMessage = "Le partage de fichiers n’est pas disponible sur cet appareil.";
+            StatusMessage = AppResources.ExportNotSupportedStatus;
         }
         finally
         {
@@ -67,7 +69,7 @@ public partial class SettingsViewModel(IEnergyService energyService) : Observabl
         {
             var file = await FilePicker.Default.PickAsync(new PickOptions
             {
-                PickerTitle = "Sélectionner un export PACTracker"
+                PickerTitle = AppResources.ImportPickerTitle
             });
 
             if (file is null)
@@ -80,23 +82,26 @@ public partial class SettingsViewModel(IEnergyService energyService) : Observabl
             var json = await reader.ReadToEndAsync();
             var importedCount = await energyService.ImportDataAsync(json);
 
-            StatusMessage = $"{importedCount} mesure(s) importée(s). Les mesures des mêmes dates ont été remplacées.";
+            StatusMessage = string.Format(
+                CultureInfo.CurrentUICulture,
+                AppResources.ImportSuccessStatus,
+                importedCount);
         }
-        catch (InvalidDataException exception)
+        catch (InvalidDataException)
         {
-            StatusMessage = exception.Message;
+            StatusMessage = AppResources.ImportInvalidStatus;
         }
         catch (IOException)
         {
-            StatusMessage = "Impossible de lire le fichier sélectionné.";
+            StatusMessage = AppResources.ImportFailedStatus;
         }
         catch (UnauthorizedAccessException)
         {
-            StatusMessage = "L’accès au fichier sélectionné a été refusé.";
+            StatusMessage = AppResources.ImportAccessDeniedStatus;
         }
         catch (FeatureNotSupportedException)
         {
-            StatusMessage = "La sélection de fichiers n’est pas disponible sur cet appareil.";
+            StatusMessage = AppResources.ImportNotSupportedStatus;
         }
         finally
         {

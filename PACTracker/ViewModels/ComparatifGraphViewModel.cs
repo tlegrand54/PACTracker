@@ -11,6 +11,7 @@ using System.Globalization;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
+using PACTracker.Resources.Translation;
 
 namespace PACTracker.ViewModels;
 
@@ -22,20 +23,18 @@ public partial class ComparatifGraphViewModel(IEnergyService energyService) : Ob
     public int[] Values2 { get; set; } =
         [4, 2, 5, 2, 4, 5, 3];
 
-    private static readonly CultureInfo French = CultureInfo.GetCultureInfo("fr-FR");
-
     // Single source for the bar colors and the legend dots (current year first)
     private static readonly string[] YearColors = ["#4C2BD9", "#3B82F6", "#B7A5F2"];
 
     private static readonly PeriodOption[] AllPeriods =
     [
-        new() { Label = "Janvier – Décembre", FirstMonth = 1, LastMonth = 12 },
-        new() { Label = "Janvier – Juin", FirstMonth = 1, LastMonth = 6 },
-        new() { Label = "Juillet – Décembre", FirstMonth = 7, LastMonth = 12 },
-        new() { Label = "Janvier – Mars", FirstMonth = 1, LastMonth = 3 },
-        new() { Label = "Avril – Juin", FirstMonth = 4, LastMonth = 6 },
-        new() { Label = "Juillet – Septembre", FirstMonth = 7, LastMonth = 9 },
-        new() { Label = "Octobre – Décembre", FirstMonth = 10, LastMonth = 12 }
+        new() { Label = AppResources.PeriodJanuaryToDecember, FirstMonth = 1, LastMonth = 12 },
+        new() { Label = AppResources.PeriodJanuaryToJune, FirstMonth = 1, LastMonth = 6 },
+        new() { Label = AppResources.PeriodJulyToDecember, FirstMonth = 7, LastMonth = 12 },
+        new() { Label = AppResources.PeriodJanuaryToMarch, FirstMonth = 1, LastMonth = 3 },
+        new() { Label = AppResources.PeriodAprilToJune, FirstMonth = 4, LastMonth = 6 },
+        new() { Label = AppResources.PeriodJulyToSeptember, FirstMonth = 7, LastMonth = 9 },
+        new() { Label = AppResources.PeriodOctoberToDecember, FirstMonth = 10, LastMonth = 12 }
     ];
 
     // The three displayed years, loaded by LoadAsync (12 months each)
@@ -61,7 +60,7 @@ public partial class ComparatifGraphViewModel(IEnergyService energyService) : Ob
     [ObservableProperty] private string chartSubtitle = string.Empty;
     [ObservableProperty] private string unitCaption = string.Empty;
     [ObservableProperty] private string periodNote = string.Empty;
-    [ObservableProperty] private string totalLabel = "Total annuel";
+    [ObservableProperty] private string totalLabel = AppResources.AnnualTotal;
 
     // Chart
     [ObservableProperty] private ISeries[] series = [];
@@ -112,18 +111,23 @@ public partial class ComparatifGraphViewModel(IEnergyService energyService) : Ob
 
         ChartTitle = SelectedMetric switch
         {
-            EnergyMetric.Consumption => "Consommation électrique",
-            EnergyMetric.Production => "Production de chaleur",
-            _ => "Coefficient de performance"
+            EnergyMetric.Consumption => AppResources.ChartTitleConsumption,
+            EnergyMetric.Production => AppResources.ChartTitleProduction,
+            _ => AppResources.ChartTitleCop
         };
 
-        ChartSubtitle = $"{(isCop ? "Sans unité" : "En kWh")} • Comparaison sur {monthCount} mois";
-        UnitCaption = isCop ? "(sans unité)" : "(kWh)";
-        TotalLabel = isCop ? "COP annuel" : "Total annuel";
-
-        var noun = isCop ? "COP annuel" : "total annuel";
-        PeriodNote = $"Le {noun} {CurrentYear} est calculé sur la période renseignée " +
-                     $"({MonthName(first)} à {MonthName(last)}).";
+        ChartSubtitle = string.Format(
+            CultureInfo.CurrentUICulture,
+            isCop ? AppResources.ChartSubtitleUnitless : AppResources.ChartSubtitleKwh,
+            monthCount);
+        UnitCaption = isCop ? AppResources.UnitCaptionUnitless : AppResources.UnitCaptionKwh;
+        TotalLabel = isCop ? AppResources.AnnualCopTotal : AppResources.AnnualTotal;
+        PeriodNote = string.Format(
+            CultureInfo.CurrentUICulture,
+            isCop ? AppResources.PeriodNoteCop : AppResources.PeriodNoteTotal,
+            CurrentYear,
+            MonthName(first),
+            MonthName(last));
     }
 
     private void BuildChart(YearSummaryModel[] years, int first, int last)
@@ -151,7 +155,7 @@ public partial class ComparatifGraphViewModel(IEnergyService energyService) : Ob
         for (var month = first; month <= last; month++)
         {
             Rows.Add(CreateRow(
-                French.TextInfo.ToTitleCase(MonthName(month)),
+                CultureInfo.CurrentUICulture.TextInfo.ToTitleCase(MonthName(month)),
                 GetValue(FindMonth(years[0], month)),
                 GetValue(FindMonth(years[1], month)),
                 GetValue(FindMonth(years[2], month))));
@@ -190,9 +194,12 @@ public partial class ComparatifGraphViewModel(IEnergyService energyService) : Ob
         // Lower is better for consumption; higher is better for production and COP
         var isImprovement = SelectedMetric == EnergyMetric.Consumption ? percent < 0 : percent > 0;
 
-        row.VariationText = percent.ToString("+0.0;-0.0;0.0", French) + " %";
+        row.VariationText = percent.ToString("+0.0;-0.0;0.0", CultureInfo.CurrentCulture) + " %";
         row.VariationArrow = percent < 0 ? "↓" : percent > 0 ? "↑" : string.Empty;
-        row.VariationCaption = $"vs {PreviousYear}";
+        row.VariationCaption = string.Format(
+            CultureInfo.CurrentUICulture,
+            AppResources.VariationCaption,
+            PreviousYear);
         row.VariationColor = percent == 0
             ? Colors.Gray
             : Color.FromArgb(isImprovement ? "#16A34A" : "#DC2626");
@@ -230,11 +237,13 @@ public partial class ComparatifGraphViewModel(IEnergyService energyService) : Ob
     private string Format(double? value) => value is null
         ? "-"
         : SelectedMetric == EnergyMetric.Cop
-            ? value.Value.ToString("F2", French)
-            : value.Value.ToString("N0", French);
+            ? value.Value.ToString("F2", CultureInfo.CurrentCulture)
+            : value.Value.ToString("N0", CultureInfo.CurrentCulture);
 
-    private static string MonthName(int month) => French.DateTimeFormat.GetMonthName(month);
+    private static string MonthName(int month)
+        => CultureInfo.CurrentUICulture.DateTimeFormat.GetMonthName(month);
 
     private static string ShortMonthName(int month)
-        => French.TextInfo.ToTitleCase(French.DateTimeFormat.GetAbbreviatedMonthName(month).TrimEnd('.'));
+        => CultureInfo.CurrentUICulture.TextInfo.ToTitleCase(
+            CultureInfo.CurrentUICulture.DateTimeFormat.GetAbbreviatedMonthName(month).TrimEnd('.'));
 }

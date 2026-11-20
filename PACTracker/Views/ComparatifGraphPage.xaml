@@ -3,12 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:PACTracker.ViewModels"
              xmlns:enum="clr-namespace:PACTracker.Enums"
+             xmlns:resources="clr-namespace:PACTracker.Resources.Translation"
              xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
              xmlns:skia="clr-namespace:SkiaSharp.Views.Maui.Controls;assembly=SkiaSharp.Views.Maui.Controls"
              xmlns:draw="clr-namespace:LiveChartsCore.SkiaSharpView.Drawing.Geometries;assembly=LiveChartsCore.SkiaSharpView"
              x:Class="PACTracker.Views.ComparatifGraphPage"
              x:DataType="vm:ComparatifGraphViewModel"
-             Title="Comparaison mensuelle">
+             Title="{x:Static resources:AppResources.MonthlyComparisonPageTitle}">
 
     <ContentPage.Resources>
         <Style x:Key="MetricButton" TargetType="Button">
@@ -35,7 +36,7 @@
 
             <!-- Metric selector -->
             <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
-                <Button Grid.Column="0" Text="Consommation&#10;(kWh)"
+                <Button Grid.Column="0" Text="{x:Static resources:AppResources.ConsumptionMetricLabel}"
                         Style="{StaticResource MetricButton}"
                         Command="{Binding SelectMetricCommand}"
                         CommandParameter="{x:Static enum:EnergyMetric.Consumption}">
@@ -47,7 +48,7 @@
                         </DataTrigger>
                     </Button.Triggers>
                 </Button>
-                <Button Grid.Column="1" Text="Production&#10;(kWh)"
+                <Button Grid.Column="1" Text="{x:Static resources:AppResources.ProductionMetricLabel}"
                         Style="{StaticResource MetricButton}"
                         Command="{Binding SelectMetricCommand}"
                         CommandParameter="{x:Static enum:EnergyMetric.Production}">
@@ -59,7 +60,7 @@
                         </DataTrigger>
                     </Button.Triggers>
                 </Button>
-                <Button Grid.Column="2" Text="COP&#10;(sans unité)"
+                <Button Grid.Column="2" Text="{x:Static resources:AppResources.CopMetricLabel}"
                         Style="{StaticResource MetricButton}"
                         Command="{Binding SelectMetricCommand}"
                         CommandParameter="{x:Static enum:EnergyMetric.Cop}">
@@ -75,7 +76,7 @@
 
             <!-- Period picker and year legend -->
             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                <Picker Grid.Column="0" Title="Période"
+                <Picker Grid.Column="0" Title="{x:Static resources:AppResources.PeriodPickerTitle}"
                         HorizontalTextAlignment="Center"
                         ItemsSource="{Binding PeriodOptions}"
                         ItemDisplayBinding="{Binding Label, x:DataType=vm:PeriodOption}"
@@ -121,7 +122,7 @@
 
                     <!-- Header -->
                     <Grid ColumnDefinitions="1.5*,*,*,*,1.4*" Padding="0,0,0,8">
-                        <Label Grid.Column="0" Text="Mois" FontAttributes="Bold" VerticalOptions="Center" />
+                        <Label Grid.Column="0" Text="{x:Static resources:AppResources.MonthsColumnHeader}" FontAttributes="Bold" VerticalOptions="Center" />
                         <VerticalStackLayout Grid.Column="1">
                             <Label Text="{Binding CurrentYear}" FontAttributes="Bold" />
                             <Label Text="{Binding UnitCaption}" Style="{StaticResource Caption}" />

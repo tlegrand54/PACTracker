@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using PACTracker.Core.Energy.Services;
 using PACTracker.Core.Exceptions;
 using PACTracker.Models;
+using PACTracker.Resources.Translation;
 
 namespace PACTracker.ViewModels
 {
@@ -31,7 +32,7 @@ namespace PACTracker.ViewModels
             if (!TryParse(ConsumptionText, out var consumption) ||
                 !TryParse(ProductionText, out var production))
             {
-                ErrorMessage = "Veuillez saisir des nombres positifs valides.";
+                ErrorMessage = AppResources.InvalidReadingValueError;
                 return;
             }
 
@@ -43,13 +44,13 @@ namespace PACTracker.ViewModels
                 await energyService.SaveRecordAsync(SelectedDate.Date, consumption, production);
                 await Shell.Current.GoToAsync("..");
             }
-            catch (InvalidReadingException exception)
+            catch (InvalidReadingException)
             {
-                ErrorMessage = exception.Message;
+                ErrorMessage = AppResources.InvalidReadingOrderError;
             }
             catch (ArgumentOutOfRangeException)
             {
-                ErrorMessage = "Veuillez saisir des nombres positifs valides.";
+                ErrorMessage = AppResources.InvalidReadingValueError;
             }
         }
 

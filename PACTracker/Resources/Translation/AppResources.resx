@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="HomeTabTitle" xml:space="preserve"><value>Accueil</value></data>
+  <data name="AnnualTabTitle" xml:space="preserve"><value>Annuel</value></data>
+  <data name="MonthlyTabTitle" xml:space="preserve"><value>Mensuel</value></data>
+  <data name="SettingsTabTitle" xml:space="preserve"><value>Paramètres</value></data>
+  <data name="MainPageTitle" xml:space="preserve"><value>PAC Tracker</value></data>
+  <data name="MainEnergyButton" xml:space="preserve"><value>Saisies du mois</value></data>
+  <data name="MainComparisonButton" xml:space="preserve"><value>Comparatif</value></data>
+  <data name="EnergyPageTitle" xml:space="preserve"><value>Saisies du mois</value></data>
+  <data name="AddEnergyButton" xml:space="preserve"><value>Ajouter une saisie</value></data>
+  <data name="DateLabel" xml:space="preserve"><value>Date</value></data>
+  <data name="ProductionLabel" xml:space="preserve"><value>Production</value></data>
+  <data name="ConsumptionLabel" xml:space="preserve"><value>Consommation</value></data>
+  <data name="ConsumptionShortLabel" xml:space="preserve"><value>Conso.</value></data>
+  <data name="CopLabel" xml:space="preserve"><value>COP</value></data>
+  <data name="MonthlyCopLabel" xml:space="preserve"><value>COP du mois</value></data>
+  <data name="AddEnergyPageTitle" xml:space="preserve"><value>Nouvelle saisie</value></data>
+  <data name="ElectricityConsumptionLabel" xml:space="preserve"><value>Consommation électrique (kWh)</value></data>
+  <data name="ConsumptionPlaceholder" xml:space="preserve"><value>ex. : 12,5</value></data>
+  <data name="HeatProductionLabel" xml:space="preserve"><value>Production de chaleur (kWh)</value></data>
+  <data name="ProductionPlaceholder" xml:space="preserve"><value>ex. : 38,0</value></data>
+  <data name="CancelButton" xml:space="preserve"><value>Annuler</value></data>
+  <data name="SaveButton" xml:space="preserve"><value>Enregistrer</value></data>
+  <data name="InvalidReadingValueError" xml:space="preserve"><value>Veuillez saisir des nombres positifs valides.</value></data>
+  <data name="InvalidReadingOrderError" xml:space="preserve"><value>Les relevés doivent être supérieurs ou égaux au relevé précédent et inférieurs ou égaux au relevé suivant.</value></data>
+  <data name="AnnualPageTitle" xml:space="preserve"><value>Comparaison annuelle</value></data>
+  <data name="MonthlyComparisonPageTitle" xml:space="preserve"><value>Comparaison mensuelle</value></data>
+  <data name="ConsumptionMetricLabel" xml:space="preserve"><value>Consommation
+(kWh)</value></data>
+  <data name="ProductionMetricLabel" xml:space="preserve"><value>Production
+(kWh)</value></data>
+  <data name="CopMetricLabel" xml:space="preserve"><value>COP
+(sans unité)</value></data>
+  <data name="PeriodPickerTitle" xml:space="preserve"><value>Période</value></data>
+  <data name="MonthsColumnHeader" xml:space="preserve"><value>Mois</value></data>
+  <data name="ChartTitleConsumption" xml:space="preserve"><value>Consommation électrique</value></data>
+  <data name="ChartTitleProduction" xml:space="preserve"><value>Production de chaleur</value></data>
+  <data name="ChartTitleCop" xml:space="preserve"><value>Coefficient de performance</value></data>
+  <data name="ChartSubtitleUnitless" xml:space="preserve"><value>Sans unité • Comparaison sur {0} mois</value></data>
+  <data name="ChartSubtitleKwh" xml:space="preserve"><value>En kWh • Comparaison sur {0} mois</value></data>
+  <data name="UnitCaptionUnitless" xml:space="preserve"><value>(sans unité)</value></data>
+  <data name="UnitCaptionKwh" xml:space="preserve"><value>(kWh)</value></data>
+  <data name="AnnualCopTotal" xml:space="preserve"><value>COP annuel</value></data>
+  <data name="AnnualTotal" xml:space="preserve"><value>Total annuel</value></data>
+  <data name="PeriodNoteCop" xml:space="preserve"><value>Le COP annuel {0} est calculé sur la période renseignée ({1} à {2}).</value></data>
+  <data name="PeriodNoteTotal" xml:space="preserve"><value>Le total annuel {0} est calculé sur la période renseignée ({1} à {2}).</value></data>
+  <data name="VariationCaption" xml:space="preserve"><value>vs {0}</value></data>
+  <data name="PeriodJanuaryToDecember" xml:space="preserve"><value>Janvier – Décembre</value></data>
+  <data name="PeriodJanuaryToJune" xml:space="preserve"><value>Janvier – Juin</value></data>
+  <data name="PeriodJulyToDecember" xml:space="preserve"><value>Juillet – Décembre</value></data>
+  <data name="PeriodJanuaryToMarch" xml:space="preserve"><value>Janvier – Mars</value></data>
+  <data name="PeriodAprilToJune" xml:space="preserve"><value>Avril – Juin</value></data>
+  <data name="PeriodJulyToSeptember" xml:space="preserve"><value>Juillet – Septembre</value></data>
+  <data name="PeriodOctoberToDecember" xml:space="preserve"><value>Octobre – Décembre</value></data>
+  <data name="SettingsPageTitle" xml:space="preserve"><value>Paramètres</value></data>
+  <data name="DataTransferHeading" xml:space="preserve"><value>Sauvegarder et transférer</value></data>
+  <data name="DataTransferDescription" xml:space="preserve"><value>Exportez vos mesures dans un fichier JSON pour les sauvegarder ou les transférer vers un autre appareil. Importez ensuite ce fichier dans PACTracker.</value></data>
+  <data name="ExportButton" xml:space="preserve"><value>Exporter mes données</value></data>
+  <data name="ImportButton" xml:space="preserve"><value>Importer un fichier</value></data>
+  <data name="ImportPolicyDescription" xml:space="preserve"><value>À l’import, les mesures du fichier remplacent celles déjà présentes pour les mêmes dates. Les autres mesures sont conservées.</value></data>
+  <data name="ExportShareTitle" xml:space="preserve"><value>Exporter les données PACTracker</value></data>
+  <data name="ExportReadyStatus" xml:space="preserve"><value>Export prêt. Choisissez où enregistrer ou partager le fichier.</value></data>
+  <data name="ExportFailedStatus" xml:space="preserve"><value>Impossible de créer ou partager le fichier d’export.</value></data>
+  <data name="ExportAccessDeniedStatus" xml:space="preserve"><value>L’accès au fichier d’export a été refusé.</value></data>
+  <data name="ExportNotSupportedStatus" xml:space="preserve"><value>Le partage de fichiers n’est pas disponible sur cet appareil.</value></data>
+  <data name="ImportPickerTitle" xml:space="preserve"><value>Sélectionner un export PACTracker</value></data>
+  <data name="ImportSuccessStatus" xml:space="preserve"><value>Nombre de mesures importées : {0}. Les valeurs du fichier remplacent celles déjà présentes aux mêmes dates.</value></data>
+  <data name="ImportFailedStatus" xml:space="preserve"><value>Impossible de lire le fichier sélectionné.</value></data>
+  <data name="ImportInvalidStatus" xml:space="preserve"><value>Le fichier sélectionné est vide ou invalide. Vérifiez qu’il s’agit d’un export PACTracker.</value></data>
+  <data name="ImportAccessDeniedStatus" xml:space="preserve"><value>L’accès au fichier sélectionné a été refusé.</value></data>
+  <data name="ImportNotSupportedStatus" xml:space="preserve"><value>La sélection de fichiers n’est pas disponible sur cet appareil.</value></data>
+</root>

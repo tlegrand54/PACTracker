@@ -2,9 +2,10 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:PACTracker.ViewModels"
+             xmlns:resources="clr-namespace:PACTracker.Resources.Translation"
              x:Class="PACTracker.MainPage"
              x:DataType="vm:MainPageViewModel"
-             Title="PAC Tracker">
+             Title="{x:Static resources:AppResources.MainPageTitle}">
 
     <VerticalStackLayout Padding="24" Spacing="128" VerticalOptions="Center">
         <Button 
@@ -15,7 +16,7 @@
             BackgroundColor="ForestGreen"
             FontAutoScalingEnabled="True"
             FontAttributes="Bold"
-            Text="Saisies du mois" Command="{Binding GoToEnergyCommand}" />
+            Text="{x:Static resources:AppResources.MainEnergyButton}" Command="{Binding GoToEnergyCommand}" />
         
         <Button 
             MinimumWidthRequest="50"
@@ -24,6 +25,6 @@
             HeightRequest="160"
             FontAutoScalingEnabled="True"
             FontAttributes="Bold"
-            Text="Comparatif" Command="{Binding GoToComparisonCommand}" />
+            Text="{x:Static resources:AppResources.MainComparisonButton}" Command="{Binding GoToComparisonCommand}" />
     </VerticalStackLayout>
 </ContentPage>
