@@ -50,26 +50,55 @@ namespace PACTracker.Core.Energy.Services
             return energyRecords?.FirstOrDefault(w => w.Date.Year == year && w.Date.Month == month && w.Date.Day == day);
         }
 
-        public Task SaveRecordAsync(DateTime date, double consumption, double production, CancellationToken ct = default)
+        public async Task SaveRecordAsync(DateTime date, double consumption, double production, CancellationToken ct = default)
         {
-            var record = new EnergyEntity { Date = date, Consumption = consumption, Production = production };
-            if (record.Consumption < 0 || record.Production < 0)
+            if (!double.IsFinite(consumption) ||
+                !double.IsFinite(production) ||
+                consumption < 0 ||
+                production < 0)
             {
-                ArgumentOutOfRangeException argumentOutOfRangeException = new(nameof(record), "Values must be positive.");
-                throw argumentOutOfRangeException;
+                throw new ArgumentOutOfRangeException(
+                    nameof(consumption),
+                    "Values must be positive finite numbers.");
             }
 
-            // drop the time part so the unique index on Date works
-            record.Date = record.Date.Date;
+            var record = new EnergyEntity
+            {
+                Date = date.Date,
+                Consumption = consumption,
+                Production = production
+            };
 
-            var monthRecord = GetAllRecordsByMonthAsync(record.Date.Year, record.Date.Month);
+            var monthlyRecords = await repository.GetByMonthAsync(
+                record.Date.Year,
+                record.Date.Month,
+                ct);
 
-            var laterRecord = monthRecord.Result.OrderByDescending(r => r.Date).FirstOrDefault();
+            var otherRecords = monthlyRecords
+                .Where(r => r.Date.Date != record.Date)
+                .OrderBy(r => r.Date)
+                .ToList();
 
-            if (laterRecord != null && (laterRecord.Consumption > record.Consumption || laterRecord.Production > record.Production))
-                throw new InvalidReadingException("The reading must be higher than the last one of the same month.");
+            var previous = otherRecords.LastOrDefault(r => r.Date < record.Date);
+            var next = otherRecords.FirstOrDefault(r => r.Date > record.Date);
 
-            return repository.UpsertAsync(record, ct);
+            if (previous != null &&
+                (record.Consumption < previous.Consumption ||
+                 record.Production < previous.Production))
+            {
+                throw new InvalidReadingException(
+                    "The reading must be higher than or equal to the previous reading.");
+            }
+
+            if (next != null &&
+                (record.Consumption > next.Consumption ||
+                 record.Production > next.Production))
+            {
+                throw new InvalidReadingException(
+                    "The reading must be lower than or equal to the next reading.");
+            }
+
+            await repository.UpsertAsync(record, ct);
         }
     }
 }
