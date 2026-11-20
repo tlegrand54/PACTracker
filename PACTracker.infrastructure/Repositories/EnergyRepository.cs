@@ -45,6 +45,11 @@ internal class EnergyRepository(IDbContextFactory<AppDbContext> factory) : IEner
 
     public async Task UpsertAsync(EnergyEntity energy, CancellationToken ct = default)
     {
+        ArgumentNullException.ThrowIfNull(energy);
+        ValidateReadingValue(nameof(energy.Consumption), energy.Consumption);
+        ValidateReadingValue(nameof(energy.Production), energy.Production);
+        energy.Date = energy.Date.Date;
+
         await using var db = await factory.CreateDbContextAsync(ct);
 
         var existing = await db.Energies.FirstOrDefaultAsync(e => e.Date == energy.Date, ct);
@@ -62,5 +67,16 @@ internal class EnergyRepository(IDbContextFactory<AppDbContext> factory) : IEner
 
         // Generates and runs the INSERT or UPDATE
         await db.SaveChangesAsync(ct);
+    }
+
+    private static void ValidateReadingValue(string parameterName, double value)
+    {
+        if (!double.IsFinite(value) || value < 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                parameterName,
+                value,
+                "Values must be non-negative finite numbers.");
+        }
     }
 }

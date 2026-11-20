@@ -2,10 +2,6 @@
 using PACTracker.Core.Exceptions;
 using PACTracker.Domain.Entities;
 using PACTracker.Infrastructure.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Text;
 
 namespace PACTracker.Core.Energy.Services
 {
@@ -52,15 +48,16 @@ namespace PACTracker.Core.Energy.Services
 
         public async Task SaveRecordAsync(DateTime date, double consumption, double production, CancellationToken ct = default)
         {
-            if (!double.IsFinite(consumption) ||
-                !double.IsFinite(production) ||
-                consumption < 0 ||
-                production < 0)
+            if (date.Date > DateTime.Today)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(consumption),
-                    "Values must be positive finite numbers.");
+                    nameof(date),
+                    date,
+                    "Readings cannot be recorded for a future date.");
             }
+
+            ValidateReadingValue(nameof(consumption), consumption);
+            ValidateReadingValue(nameof(production), production);
 
             var record = new EnergyEntity
             {
@@ -99,6 +96,17 @@ namespace PACTracker.Core.Energy.Services
             }
 
             await repository.UpsertAsync(record, ct);
+        }
+
+        private static void ValidateReadingValue(string parameterName, double value)
+        {
+            if (!double.IsFinite(value) || value < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    parameterName,
+                    value,
+                    "Values must be non-negative finite numbers.");
+            }
         }
     }
 }
