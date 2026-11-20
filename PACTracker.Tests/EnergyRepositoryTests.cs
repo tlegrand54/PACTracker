@@ -84,6 +84,46 @@ public sealed class EnergyRepositoryTests
         Assert.AreEqual(300, record.Production);
     }
 
+    [TestMethod]
+    public async Task UpsertManyAsync_InsertsAndReplacesRecordsAtomically()
+    {
+        await using var database = new DatabaseFixture();
+        var existingDate = new DateTime(2026, 3, 20);
+        await database.Repository.UpsertAsync(Reading(existingDate, 100, 300));
+
+        await database.Repository.UpsertManyAsync(
+        [
+            Reading(existingDate, 125, 350),
+            Reading(new DateTime(2026, 3, 21), 130, 360)
+        ]);
+
+        var records = await database.Repository.GetAllAsync();
+        Assert.AreEqual(2, records.Count);
+        Assert.AreEqual(125, records[0].Consumption);
+        Assert.AreEqual(350, records[0].Production);
+        Assert.AreEqual(new DateTime(2026, 3, 21), records[1].Date);
+    }
+
+    [TestMethod]
+    public async Task UpsertManyAsync_RejectsInvalidBatchWithoutWritingAnyRecord()
+    {
+        await using var database = new DatabaseFixture();
+        var existingDate = new DateTime(2026, 3, 20);
+        await database.Repository.UpsertAsync(Reading(existingDate, 100, 300));
+
+        await Assert.ThrowsExactlyAsync<ArgumentOutOfRangeException>(() =>
+            database.Repository.UpsertManyAsync(
+            [
+                Reading(new DateTime(2026, 3, 21), 130, 360),
+                Reading(new DateTime(2026, 3, 22), -1, 400)
+            ]));
+
+        var records = await database.Repository.GetAllAsync();
+        Assert.AreEqual(1, records.Count);
+        Assert.AreEqual(existingDate, records[0].Date);
+        Assert.AreEqual(100, records[0].Consumption);
+    }
+
     private static EnergyEntity Reading(DateTime date, double consumption, double production)
         => new() { Date = date, Consumption = consumption, Production = production };
 

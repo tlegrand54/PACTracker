@@ -43,6 +43,16 @@ internal class EnergyRepository(IDbContextFactory<AppDbContext> factory) : IEner
             .ToListAsync(ct);
     }
 
+    public async Task<IReadOnlyList<EnergyEntity>> GetAllAsync(CancellationToken ct = default)
+    {
+        await using var db = await factory.CreateDbContextAsync(ct);
+
+        return await db.Energies
+            .AsNoTracking()
+            .OrderBy(e => e.Date)
+            .ToListAsync(ct);
+    }
+
     public async Task UpsertAsync(EnergyEntity energy, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(energy);
@@ -67,6 +77,47 @@ internal class EnergyRepository(IDbContextFactory<AppDbContext> factory) : IEner
 
         // Generates and runs the INSERT or UPDATE
         await db.SaveChangesAsync(ct);
+    }
+
+    public async Task UpsertManyAsync(
+        IReadOnlyCollection<EnergyEntity> energies,
+        CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(energies);
+
+        var records = energies.Select(energy =>
+        {
+            ArgumentNullException.ThrowIfNull(energy);
+            ValidateReadingValue(nameof(energy.Consumption), energy.Consumption);
+            ValidateReadingValue(nameof(energy.Production), energy.Production);
+
+            return new EnergyEntity
+            {
+                Date = energy.Date.Date,
+                Consumption = energy.Consumption,
+                Production = energy.Production
+            };
+        }).ToArray();
+
+        await using var db = await factory.CreateDbContextAsync(ct);
+        await using var transaction = await db.Database.BeginTransactionAsync(ct);
+
+        foreach (var record in records)
+        {
+            var existing = await db.Energies.FirstOrDefaultAsync(e => e.Date == record.Date, ct);
+            if (existing is null)
+            {
+                db.Energies.Add(record);
+            }
+            else
+            {
+                existing.Consumption = record.Consumption;
+                existing.Production = record.Production;
+            }
+        }
+
+        await db.SaveChangesAsync(ct);
+        await transaction.CommitAsync(ct);
     }
 
     private static void ValidateReadingValue(string parameterName, double value)

@@ -39,5 +39,9 @@ namespace PACTracker.Core.Energy.Services
         /// <param name="ct"></param>
         /// <returns></returns>
         Task SaveRecordAsync(DateTime date, double consumption, double production, CancellationToken ct = default);
+
+        Task<string> ExportDataAsync(CancellationToken ct = default);
+
+        Task<int> ImportDataAsync(string json, CancellationToken ct = default);
     }
 }

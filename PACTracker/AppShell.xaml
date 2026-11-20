@@ -17,6 +17,8 @@
                       ContentTemplate="{DataTemplate views:AnnualPage}" />
         <ShellContent Title="Mensuel" Icon="monthly_icon.png" Route="ComparatifGraphPage"
                       ContentTemplate="{DataTemplate views:ComparatifGraphPage}" />
+        <ShellContent Title="Paramètres" Icon="settings_icon.png" Route="SettingsPage"
+                      ContentTemplate="{DataTemplate views:SettingsPage}" />
     </TabBar>
 
 </Shell>
